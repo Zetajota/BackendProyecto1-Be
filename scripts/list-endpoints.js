@@ -75,5 +75,6 @@ for (const [tag, list] of byTag) {
 }
 
 const target = path.join(__dirname, '..', 'docs', 'endpoints.md');
+fs.mkdirSync(path.dirname(target), { recursive: true });
 fs.writeFileSync(target, out.join('\n'));
 console.log(`docs/endpoints.md generado: ${rows.length} endpoints en ${byTag.size} modulos`);

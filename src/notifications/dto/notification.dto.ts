@@ -3,6 +3,8 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
+import { toBoolean } from '../../common/dto/query-helpers';
+
 export class CreateNotificationDto {
   @ApiProperty({ description: 'ID del usuario que recibe el aviso' })
   @IsMongoId()
@@ -24,7 +26,7 @@ export class CreateNotificationDto {
 export class NotificationsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ description: 'true = leidas, false = sin leer' })
   @IsOptional()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(toBoolean)
   @IsBoolean()
   read?: boolean;
 }

@@ -25,7 +25,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Crear un usuario' })
   @Post()
-  @HttpCode(400)
+  @HttpCode(201)
   async create(@Body() dto: CreateUserDto): Promise<{ id: string; name: string; email: string; role: Role }> {
     const user = await this.usersService.create(dto);
     return { id: user.id, name: user.name, email: user.email, role: user.role };
@@ -38,18 +38,18 @@ export class UsersController {
     return this.usersService.updateOwnName(user.id, dto.name);
   }
 
-  @ApiOperation({ summary: 'Ver un usuario por ID' })
-  @Get(':id')
-  findOne(@Param('id', ParseObjectIdPipe) id: string): Promise<User> {
-    return this.usersService.findOne(id);
-  }
-
   // Perfil propio: disponible para cualquier rol. Debe ir antes de ':id'
   @ApiOperation({ summary: 'Mi perfil de usuario' })
   @Roles(Role.Admin, Role.Docente, Role.Estudiante)
   @Get('me')
   me(@CurrentUser() user: AuthUser): Promise<User> {
     return this.usersService.findOne(user.id);
+  }
+
+  @ApiOperation({ summary: 'Ver un usuario por ID' })
+  @Get(':id')
+  findOne(@Param('id', ParseObjectIdPipe) id: string): Promise<User> {
+    return this.usersService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Editar un usuario' })
