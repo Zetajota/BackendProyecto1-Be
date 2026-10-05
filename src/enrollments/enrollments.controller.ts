@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthUser, CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -31,7 +31,7 @@ export class EnrollmentsController {
 
   // Debe ir antes de ':id' para que 'mine' no se interprete como un ID
   @ApiOperation({ summary: 'Mis matriculas' })
-  @Roles(Role.Docente)
+  @Roles(Role.Estudiante)
   @Get('mine')
   mine(@CurrentUser() user: AuthUser, @Query() query: EnrollmentsQueryDto): Promise<Paginated<Enrollment>> {
     return this.enrollmentsService.findMine(user.id, query);
@@ -48,6 +48,12 @@ export class EnrollmentsController {
   @Roles(Role.Admin, Role.Estudiante)
   @Post(':id/cancel')
   cancel(@Param('id', ParseObjectIdPipe) id: string, @CurrentUser() user: AuthUser): Promise<Enrollment> {
+    return this.enrollmentsService.cancel(id, user);
+  }
+
+  @Roles(Role.Admin, Role.Estudiante)
+  @Patch(':id/cancel')
+  cancelPatch(@Param('id', ParseObjectIdPipe) id: string, @CurrentUser() user: AuthUser): Promise<Enrollment> {
     return this.enrollmentsService.cancel(id, user);
   }
 }
